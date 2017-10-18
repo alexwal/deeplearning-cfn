@@ -85,7 +85,7 @@ Follow **[Step 3](cfn-template/StackSetup.md#logintomaster)** in [Using the AWS 
 The following example shows how to run CIFAR-10 with data parallelism on MXNet. Note the use of the DEEPLEARNING_* environment variables.
 
 	#terminate all running Python processes across workers 
-	while read -u 10 host; do ssh -o "StrictHostKeyChecking no" $host "pkill -f python" ; \
+	while read -u 10 host; do ssh -o "StrictHostKeyChecking no" $host "pkill -f python3" ; \
 	done 10<$DEEPLEARNING_WORKERS_PATH
 
 	#navigate to the MXNet image-classification example directory \
@@ -93,7 +93,7 @@ The following example shows how to run CIFAR-10 with data parallelism on MXNet. 
 	
 	#run the CIFAR10 distributed training example \
 	../../tools/launch.py -n $DEEPLEARNING_WORKERS_COUNT -H $DEEPLEARNING_WORKERS_PATH \
-	python train_cifar10.py --gpus $(seq -s , 0 1 $(($DEEPLEARNING_WORKER_GPU_COUNT - 1))) \
+	python3 train_cifar10.py --gpus $(seq -s , 0 1 $(($DEEPLEARNING_WORKER_GPU_COUNT - 1))) \
 	--network resnet --num-layers 50 --kv-store dist_device_sync
 
 We were able to run the training for 100 epochs in 25 minutes on 2 P2.8x EC2 instances and achieve a training accuracy of 92%.  
@@ -119,7 +119,7 @@ We have included a script in the [awslabs/deeplearning-cfn](https://github.com/a
 
     cd $EFS_MOUNT/deeplearning-cfn/examples/tensorflow && \
     # generates commands to run workers and parameter-servers on all the workers \
-    python generate_trainer.py --workers_file_path $DEEPLEARNING_WORKERS_PATH \
+    python3 generate_trainer.py --workers_file_path $DEEPLEARNING_WORKERS_PATH \
     --worker_count $DEEPLEARNING_WORKERS_COUNT \
     --worker_gpu_count $DEEPLEARNING_WORKER_GPU_COUNT \
     --trainer_script_dir $EFS_MOUNT/deeplearning-cfn/examples/tensorflow \
@@ -127,12 +127,13 @@ We have included a script in the [awslabs/deeplearning-cfn](https://github.com/a
     --batch_size 128 --data_dir=$EFS_MOUNT/cifar10_data \
     --train_dir=$EFS_MOUNT/deeplearning-cfn/examples/tensorflow/train \
     --log_dir $EFS_MOUNT/deeplearning-cfn/examples/tensorflow/logs \
+    --use_gpu False
     --max_steps 200000
 
 Stop all of the Python processes that might be running on the workers:
 
     #terminate all running Python processes across workers \
-    while read -u 10 host; do ssh -o "StrictHostKeyChecking no" $host "pkill -f python" ; \
+    while read -u 10 host; do ssh -o "StrictHostKeyChecking no" $host "pkill -f python3" ; \
     done 10<$DEEPLEARNING_WORKERS_PATH
 
 Run the distributed training across all of the workers:
@@ -149,7 +150,7 @@ We were able train this model in an hour on 2 P2.8x EC2 instances running 2 proc
 
 Running the evaluation script on the trained model achieves an accuracy of 77%:
 
-    python $EFS_MOUNT/deeplearning-cfn/examples/tensorflow/models/tutorials/image/cifar10/cifar10_eval.py \
+    python3 $EFS_MOUNT/deeplearning-cfn/examples/tensorflow/models/tutorials/image/cifar10/cifar10_eval.py \
     --data_dir=$EFS_MOUNT/cifar10_data/ \
     --eval_dir=$EFS_MOUNT/deeplearning-cfn/examples/tensorflow/eval \
     --checkpoint_dir=$EFS_MOUNT/deeplearning-cfn/examples/tensorflow/train

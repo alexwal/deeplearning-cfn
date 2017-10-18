@@ -8,7 +8,8 @@ def parse_args():
     parser.add_argument('--workers_file_path', type=str, help='worker file path', required=True)
     parser.add_argument('--worker_count', type=int, help='number of workers', required=True)
     parser.add_argument('--worker_gpu_count', type=int, help='number of gpus on each worker to use', required=True)
-    parser.add_argument('--training_script', nargs='+', help = 'training script and its arguments, e.g: --script cifar10_train.py --batch_size 8 --data_dir /myEFSVolume/data')
+    parser.add_argument('--use_gpu', type=bool, help='whether to train using GPUs or CPUs',required=True)
+    parser.add_argument('--training_script', nargs='+', help='training script and its arguments, e.g: --script cifar10_train.py --batch_size 8 --data_dir /myEFSVolume/data')
     args, unknown = parser.parse_known_args()
     args.training_script += unknown
     args.training_script = ' '.join(args.training_script)
@@ -16,7 +17,7 @@ def parse_args():
 
 # generates a list of workers where the training will be run. 
 # one worker per GPU OR one worker per instance if no GPUs
-def get_worker_list(nodes, gpu_per_node, use_gpu=False):
+def get_worker_list(nodes, gpu_per_node, use_gpu):
     lst = []
     for node in nodes:
         if use_gpu:
@@ -34,7 +35,7 @@ def get_ps_list(nodes):
     return ','.join( [n + ":2222" for n in nodes] )
 
 #creates list of commands that has to be run on each node
-def get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir, use_gpu=False):
+def get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir, use_gpu):
    
     script = 'source /etc/profile'
     script += "\n\n"
@@ -88,16 +89,16 @@ def get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_
     
     return script    
 
-def gen_scripts(training_script, nodes_file, trainer_script_dir, num_nodes, gpu_per_node, log_dir):
+def gen_scripts(training_script, nodes_file, trainer_script_dir, num_nodes, gpu_per_node, log_dir, use_gpu):
 
     with open(nodes_file, 'r') as f:
         nodes = f.read().splitlines()
     
-    workers_list = get_worker_list(nodes, gpu_per_node)
+    workers_list = get_worker_list(nodes, gpu_per_node, use_gpu)
     ps_list = get_ps_list(nodes)
 
     for index, host in enumerate(nodes):
-        script = get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir)
+        script = get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir, use_gpu)
         file_name = trainer_script_dir + "/" + host + ".sh"
         with open(file_name, "w") as sh_file:
             sh_file.write(script)
@@ -107,7 +108,7 @@ def main():
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)  
     gen_scripts(args.training_script, args.workers_file_path, args.trainer_script_dir, 
-        args.worker_count, args.worker_gpu_count, args.log_dir)
+        args.worker_count, args.worker_gpu_count, args.log_dir, args.use_gpu)
 
 if __name__ == "__main__":
     main()
