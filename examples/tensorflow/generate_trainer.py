@@ -8,8 +8,13 @@ def parse_args():
     parser.add_argument('--workers_file_path', type=str, help='worker file path', required=True)
     parser.add_argument('--worker_count', type=int, help='number of workers', required=True)
     parser.add_argument('--worker_gpu_count', type=int, help='number of gpus on each worker to use', required=True)
-    parser.add_argument('--use_gpu', type=bool, help='whether to train using GPUs or CPUs',required=True)
     parser.add_argument('--training_script', nargs='+', help='training script and its arguments, e.g: --script cifar10_train.py --batch_size 8 --data_dir /myEFSVolume/data')
+    # Whether to use GPUs (if present) or CPUs
+    gpu_parser = parser.add_mutually_exclusive_group(required=False)
+    gpu_parser.add_argument('--gpu', dest='use_gpu', action='store_true')
+    gpu_parser.add_argument('--no-gpu', dest='use_gpu', action='store_false')
+    parser.set_defaults(use_gpu=True) 
+
     args, unknown = parser.parse_known_args()
     args.training_script += unknown
     args.training_script = ' '.join(args.training_script)
