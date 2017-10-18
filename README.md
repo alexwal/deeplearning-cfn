@@ -127,7 +127,7 @@ We have included a script in the [awslabs/deeplearning-cfn](https://github.com/a
     --batch_size 128 --data_dir=$EFS_MOUNT/cifar10_data \
     --train_dir=$EFS_MOUNT/deeplearning-cfn/examples/tensorflow/train \
     --log_dir $EFS_MOUNT/deeplearning-cfn/examples/tensorflow/logs \
-    --use_gpu False
+    --use_gpu False \
     --max_steps 200000
 
 Stop all of the Python processes that might be running on the workers:
