@@ -1,0 +1,6 @@
+model_checkpoint_path: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-14727"
+all_model_checkpoint_paths: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-11168"
+all_model_checkpoint_paths: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-12057"
+all_model_checkpoint_paths: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-12947"
+all_model_checkpoint_paths: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-13838"
+all_model_checkpoint_paths: "/myEFSvolume/deeplearning-cfn/examples/tensorflow/train/model.ckpt-14727"

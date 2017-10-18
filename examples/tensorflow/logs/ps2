@@ -1,0 +1,8 @@
+2017-10-17 23:03:54.681936: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-10-17 23:03:54.681962: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-10-17 23:03:54.681971: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+2017-10-17 23:03:54.703064: E tensorflow/stream_executor/cuda/cuda_driver.cc:406] failed call to cuInit: CUDA_ERROR_UNKNOWN
+2017-10-17 23:03:54.703105: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:145] kernel driver does not appear to be running on this host (ip-10-0-1-113): /proc/driver/nvidia/version does not exist
+2017-10-17 23:03:54.710728: I tensorflow/core/distributed_runtime/rpc/grpc_channel.cc:215] Initialize GrpcChannelCache for job ps -> {0 -> deeplearning-worker1:2222, 1 -> deeplearning-worker2:2222, 2 -> localhost:2222, 3 -> deeplearning-worker4:2222, 4 -> deeplearning-worker5:2222}
+2017-10-17 23:03:54.710753: I tensorflow/core/distributed_runtime/rpc/grpc_channel.cc:215] Initialize GrpcChannelCache for job worker -> {0 -> deeplearning-worker1:2230, 1 -> deeplearning-worker2:2230, 2 -> deeplearning-worker3:2230, 3 -> deeplearning-worker4:2230, 4 -> deeplearning-worker5:2230}
+2017-10-17 23:03:54.712266: I tensorflow/core/distributed_runtime/rpc/grpc_server_lib.cc:316] Started server with target: grpc://localhost:2222
