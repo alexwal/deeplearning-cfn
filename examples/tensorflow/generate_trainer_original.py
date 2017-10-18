@@ -15,17 +15,13 @@ def parse_args():
     return args
 
 # generates a list of workers where the training will be run. 
-# one worker per GPU OR one worker per instance if no GPUs
-def get_worker_list(nodes, gpu_per_node, use_gpu=False):
+# one worker per GPU
+def get_worker_list(nodes, gpu_per_node):
     lst = []
     for node in nodes:
-        if use_gpu:
-            for index in range(gpu_per_node):
-                port = str(2230 + (index%gpu_per_node))
-                lst.append( node + ":" + port )
-        else:
-            port = str(2230)
-            lst.append(node + ':' + port)
+        for index in range(gpu_per_node):
+            port = str(2230 + (index%gpu_per_node))
+            lst.append( node + ":" + port )
     return ','.join(lst)
 
 # generates a list of parameter servers
@@ -34,53 +30,30 @@ def get_ps_list(nodes):
     return ','.join( [n + ":2222" for n in nodes] )
 
 #creates list of commands that has to be run on each node
-def get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir, use_gpu=False):
+def get_script(training_script, workers_list, ps_list, index, gpu_per_node, log_dir):
    
     script = 'source /etc/profile'
     script += "\n\n"
 
-    if use_gpu:
-        script += "CUDA_VISIBLE_DEVICES='' python3 " + training_script + " " \
-                    + "--ps_hosts=" + ps_list + " " \
-                    + "--worker_hosts=" + workers_list + " " \
-                    + "--job_name=ps " \
-                    + "--task_index=" + str(index) \
-                    + " > " + log_dir + "/ps" + str(index) \
-                    + " 2>&1" \
-                    + " &" 
-                    
-        script += "\n\n"
+    script += "CUDA_VISIBLE_DEVICES='' python3 " + training_script + " " \
+                + "--ps_hosts=" + ps_list + " " \
+                + "--worker_hosts=" + workers_list + " " \
+                + "--job_name=ps " \
+                + "--task_index=" + str(index) \
+                + " > " + log_dir + "/ps" + str(index) \
+                + " 2>&1" \
+                + " &" 
+                
+    script += "\n\n"
 
-        for i in range(gpu_per_node):    
-            script += "CUDA_VISIBLE_DEVICES='" + str(i) + "' " \
-                        + "python3 " + training_script + " " \
-                        + "--ps_hosts=" + ps_list + " " \
-                        + "--worker_hosts=" + workers_list + " " \
-                        + "--job_name=worker " \
-                        + "--task_index=" + str(index*gpu_per_node + i) \
-                        + " > "+ log_dir + "/worker" + str(index*gpu_per_node + i) \
-                        + " 2>&1" \
-                        + " &"
-                    
-            script += "\n\n"
-    else:
-        script += "python3 " + training_script + " " \
-                    + "--ps_hosts=" + ps_list + " " \
-                    + "--worker_hosts=" + workers_list + " " \
-                    + "--job_name=ps " \
-                    + "--task_index=" + str(index) \
-                    + " > " + log_dir + "/ps" + str(index) \
-                    + " 2>&1" \
-                    + " &" 
-                    
-        script += "\n\n"
-
-        script += "python3 " + training_script + " " \
+    for i in range(gpu_per_node):    
+        script += "CUDA_VISIBLE_DEVICES='" + str(i) + "' " \
+                    + "python3 " + training_script + " " \
                     + "--ps_hosts=" + ps_list + " " \
                     + "--worker_hosts=" + workers_list + " " \
                     + "--job_name=worker " \
-                    + "--task_index=" + str(index) \
-                    + " > "+ log_dir + "/worker" + str(index) \
+                    + "--task_index=" + str(index*gpu_per_node + i) \
+                    + " > "+ log_dir + "/worker" + str(index*gpu_per_node + i) \
                     + " 2>&1" \
                     + " &"
                 
