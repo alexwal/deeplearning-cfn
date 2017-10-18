@@ -13,7 +13,7 @@ def parse_args():
     gpu_parser = parser.add_mutually_exclusive_group(required=False)
     gpu_parser.add_argument('--gpu', dest='use_gpu', action='store_true')
     gpu_parser.add_argument('--no-gpu', dest='use_gpu', action='store_false')
-    parser.set_defaults(use_gpu=True) 
+    parser.set_defaults(use_gpu=False) 
 
     args, unknown = parser.parse_known_args()
     args.training_script += unknown
